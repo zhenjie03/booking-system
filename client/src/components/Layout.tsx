@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useAuthModal } from "../context/AuthModalContext";
+import { AuthModal } from "./AuthModal";
 
 function navLinkClass({ isActive }: { isActive: boolean }) {
   return isActive ? "active-link" : undefined;
@@ -8,11 +10,12 @@ function navLinkClass({ isActive }: { isActive: boolean }) {
 
 export function Layout({ children }: { children: ReactNode }) {
   const { user, logout } = useAuth();
+  const { openLogin, openRegister } = useAuthModal();
   const navigate = useNavigate();
 
   function handleLogout() {
     logout();
-    navigate("/login");
+    navigate("/book");
   }
 
   return (
@@ -42,17 +45,18 @@ export function Layout({ children }: { children: ReactNode }) {
             </>
           ) : (
             <>
-              <NavLink to="/login" className={navLinkClass}>
+              <button type="button" onClick={() => openLogin()}>
                 Log in
-              </NavLink>
-              <NavLink to="/register" className={navLinkClass}>
+              </button>
+              <button type="button" className="btn-primary" onClick={() => openRegister()}>
                 Register
-              </NavLink>
+              </button>
             </>
           )}
         </nav>
       </header>
       <main>{children}</main>
+      <AuthModal />
     </div>
   );
 }

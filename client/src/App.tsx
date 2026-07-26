@@ -8,17 +8,13 @@ import { AdminServicesPage } from "./pages/admin/AdminServicesPage";
 import { AdminStaffDetailPage } from "./pages/admin/AdminStaffDetailPage";
 import { AdminStaffPage } from "./pages/admin/AdminStaffPage";
 import { BookingPage } from "./pages/BookingPage";
-import { LoginPage } from "./pages/LoginPage";
 import { MyBookingsPage } from "./pages/MyBookingsPage";
-import { RegisterPage } from "./pages/RegisterPage";
 
 export default function App() {
   return (
     <Layout>
       <Routes>
         <Route path="/" element={<Navigate to="/book" replace />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
         <Route
           path="/book"
           element={

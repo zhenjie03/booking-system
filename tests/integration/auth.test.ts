@@ -94,4 +94,20 @@ describe("auth + RBAC", () => {
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body.bookings)).toBe(true);
   });
+
+  // Regression test: the admin router's blanket ADMIN-only middleware was
+  // once mounted at plain "/api", so it could intercept sibling public routes
+  // (like /api/staff) depending on app.use() ordering, even for guests with no
+  // token at all. It must stay scoped to "/api/admin" only.
+  it("keeps the public staff-listing route accessible with no auth at all", async () => {
+    const res = await request(app).get("/api/staff");
+    expect(res.status).toBe(200);
+    expect(Array.isArray(res.body.staff)).toBe(true);
+  });
+
+  it("keeps the public services-listing route accessible with no auth at all", async () => {
+    const res = await request(app).get("/api/services");
+    expect(res.status).toBe(200);
+    expect(Array.isArray(res.body.services)).toBe(true);
+  });
 });

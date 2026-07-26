@@ -1,12 +1,15 @@
 import { useState, type FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import { ApiError } from "../api/client";
 import { useAuth } from "../context/AuthContext";
 
-export function RegisterPage() {
-  const { register } = useAuth();
-  const navigate = useNavigate();
-  const [name, setName] = useState("");
+export function LoginForm({
+  onSuccess,
+  onSwitchToRegister,
+}: {
+  onSuccess: () => void;
+  onSwitchToRegister: () => void;
+}) {
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -17,10 +20,10 @@ export function RegisterPage() {
     setError(null);
     setIsSubmitting(true);
     try {
-      await register(email, password, name);
-      navigate("/book");
+      await login(email, password);
+      onSuccess();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Registration failed");
+      setError(err instanceof ApiError ? err.message : "Login failed");
     } finally {
       setIsSubmitting(false);
     }
@@ -28,12 +31,8 @@ export function RegisterPage() {
 
   return (
     <div className="auth-page">
-      <h1>Create an account</h1>
+      <h1>Log in</h1>
       <form onSubmit={handleSubmit}>
-        <label>
-          Name
-          <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
-        </label>
         <label>
           Email
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
@@ -44,17 +43,19 @@ export function RegisterPage() {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            minLength={8}
             required
           />
         </label>
         {error && <p className="error">{error}</p>}
         <button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Creating account..." : "Register"}
+          {isSubmitting ? "Logging in..." : "Log in"}
         </button>
       </form>
       <p>
-        Already have an account? <Link to="/login">Log in</Link>
+        No account?{" "}
+        <button type="button" className="link-button" onClick={onSwitchToRegister}>
+          Register
+        </button>
       </p>
     </div>
   );

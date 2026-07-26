@@ -11,14 +11,14 @@ router.use(authenticate, requireRole("ADMIN"));
 
 // ---------- bookings ----------
 
-router.get("/admin/bookings", async (_req, res) => {
+router.get("/bookings", async (_req, res) => {
   const allBookings = await db.query.bookings.findMany({
     orderBy: desc(bookings.startTime),
   });
   res.json({ bookings: allBookings });
 });
 
-router.patch("/admin/bookings/:id/cancel", async (req, res) => {
+router.patch("/bookings/:id/cancel", async (req, res) => {
   const [booking] = await db
     .update(bookings)
     .set({ status: "CANCELLED" })
@@ -32,7 +32,7 @@ router.patch("/admin/bookings/:id/cancel", async (req, res) => {
 
 // ---------- staff ----------
 
-router.get("/admin/staff", async (_req, res) => {
+router.get("/staff", async (_req, res) => {
   const allStaff = await db.query.staff.findMany();
   res.json({ staff: allStaff });
 });
@@ -42,7 +42,7 @@ const createStaffSchema = z.object({
   bio: z.string().optional(),
 });
 
-router.post("/admin/staff", async (req, res) => {
+router.post("/staff", async (req, res) => {
   const parsed = createStaffSchema.safeParse(req.body);
   if (!parsed.success) {
     return res.status(400).json({ error: parsed.error.flatten() });
@@ -57,7 +57,7 @@ const updateStaffSchema = z.object({
   isActive: z.boolean().optional(),
 });
 
-router.patch("/admin/staff/:id", async (req, res) => {
+router.patch("/staff/:id", async (req, res) => {
   const parsed = updateStaffSchema.safeParse(req.body);
   if (!parsed.success) {
     return res.status(400).json({ error: parsed.error.flatten() });
@@ -75,7 +75,7 @@ router.patch("/admin/staff/:id", async (req, res) => {
 
 // ---------- services ----------
 
-router.get("/admin/services", async (_req, res) => {
+router.get("/services", async (_req, res) => {
   const allServices = await db.query.services.findMany();
   res.json({ services: allServices });
 });
@@ -89,7 +89,7 @@ const createServiceSchema = z.object({
   price: z.string().min(1),
 });
 
-router.post("/admin/services", async (req, res) => {
+router.post("/services", async (req, res) => {
   const parsed = createServiceSchema.safeParse(req.body);
   if (!parsed.success) {
     return res.status(400).json({ error: parsed.error.flatten() });
@@ -108,7 +108,7 @@ const updateServiceSchema = z.object({
   isActive: z.boolean().optional(),
 });
 
-router.patch("/admin/services/:id", async (req, res) => {
+router.patch("/services/:id", async (req, res) => {
   const parsed = updateServiceSchema.safeParse(req.body);
   if (!parsed.success) {
     return res.status(400).json({ error: parsed.error.flatten() });
@@ -126,7 +126,7 @@ router.patch("/admin/services/:id", async (req, res) => {
 
 // ---------- staff <-> service assignment ----------
 
-router.get("/admin/staff/:staffId/services", async (req, res) => {
+router.get("/staff/:staffId/services", async (req, res) => {
   const rows = await db.query.staffServices.findMany({
     where: eq(staffServices.staffId, req.params.staffId),
   });
@@ -137,7 +137,7 @@ const replaceServicesSchema = z.object({
   serviceIds: z.array(z.string().min(1)),
 });
 
-router.put("/admin/staff/:staffId/services", async (req, res) => {
+router.put("/staff/:staffId/services", async (req, res) => {
   const parsed = replaceServicesSchema.safeParse(req.body);
   if (!parsed.success) {
     return res.status(400).json({ error: parsed.error.flatten() });
@@ -159,7 +159,7 @@ router.put("/admin/staff/:staffId/services", async (req, res) => {
 
 // ---------- weekly availability ----------
 
-router.get("/admin/staff/:staffId/availability", async (req, res) => {
+router.get("/staff/:staffId/availability", async (req, res) => {
   const rows = await db.query.weeklyAvailability.findMany({
     where: eq(weeklyAvailability.staffId, req.params.staffId),
   });
@@ -176,7 +176,7 @@ const replaceAvailabilitySchema = z.object({
   ),
 });
 
-router.put("/admin/staff/:staffId/availability", async (req, res) => {
+router.put("/staff/:staffId/availability", async (req, res) => {
   const parsed = replaceAvailabilitySchema.safeParse(req.body);
   if (!parsed.success) {
     return res.status(400).json({ error: parsed.error.flatten() });
