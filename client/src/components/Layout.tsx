@@ -25,11 +25,11 @@ export function Layout({ children }: { children: ReactNode }) {
           Booking System
         </NavLink>
         <nav>
+          <NavLink to="/book" className={navLinkClass}>
+            Book
+          </NavLink>
           {user ? (
             <>
-              <NavLink to="/book" className={navLinkClass}>
-                Book
-              </NavLink>
               <NavLink to="/my-bookings" className={navLinkClass}>
                 My Bookings
               </NavLink>

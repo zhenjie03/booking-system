@@ -4,6 +4,8 @@ import { DayPicker } from "react-day-picker";
 import "react-day-picker/style.css";
 import { api, ApiError } from "../api/client";
 import type { Booking, Service, Slot, Staff } from "../api/types";
+import { useAuth } from "../context/AuthContext";
+import { useAuthModal } from "../context/AuthModalContext";
 
 function toLocalDateKey(date: Date): string {
   const year = date.getFullYear();
@@ -19,6 +21,8 @@ function formatTime(iso: string): string {
 type FeedbackState = { message: string; kind: "success" | "warning" | "error" } | null;
 
 export function BookingPage() {
+  const { user } = useAuth();
+  const { openLogin } = useAuthModal();
   const queryClient = useQueryClient();
   const [staffId, setStaffId] = useState<string>("");
   const [serviceId, setServiceId] = useState<string>("");
@@ -140,6 +144,10 @@ export function BookingPage() {
                     disabled={bookMutation.isPending}
                     onClick={() => {
                       setFeedback(null);
+                      if (!user) {
+                        openLogin({ dismissable: true });
+                        return;
+                      }
                       bookMutation.mutate(slot);
                     }}
                   >

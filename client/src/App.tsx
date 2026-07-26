@@ -15,14 +15,7 @@ export default function App() {
     <Layout>
       <Routes>
         <Route path="/" element={<Navigate to="/book" replace />} />
-        <Route
-          path="/book"
-          element={
-            <ProtectedRoute>
-              <BookingPage />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/book" element={<BookingPage />} />
         <Route
           path="/my-bookings"
           element={
